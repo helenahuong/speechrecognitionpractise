@@ -1,7 +1,7 @@
+import os
 from flask import Flask, render_template, request, redirect
 import speech_recognition as sr
 from pydub import AudioSegment
-import os
 
 app = Flask(__name__)
 
@@ -38,8 +38,12 @@ def index():
                 with audio_file as source:
                     data = recognizer.record(source)
                 
-                # Recognize speech using Google Web Speech API
-                transcript = recognizer.recognize_google(data, key=None)
+                # Use the environment variable for the API key
+                api_key = os.getenv("GOOGLE_API_KEY")
+                if api_key:
+                    transcript = recognizer.recognize_google(data, key=api_key)
+                else:
+                    transcript = recognizer.recognize_google(data)
                 print(transcript)
 
             except sr.UnknownValueError:
